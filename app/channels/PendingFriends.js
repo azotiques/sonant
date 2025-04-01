@@ -1,0 +1,84 @@
+"use client";
+
+import { useQuery } from "@tanstack/react-query";
+import {
+  getPendingFriendRequests,
+  getSentFriendRequests,
+} from "../_utils/actions";
+import { LoaderCircle } from "lucide-react";
+import UserDialog from "../_components/UserDialog";
+import useUser from "@/hooks/useUser";
+import { Separator } from "@/components/ui/separator";
+
+function PendingFriends() {
+  const {
+    data: userData,
+    error: userError,
+    isLoading: userIsLoading,
+  } = useUser();
+
+  const { data, error, isLoading } = useQuery({
+    queryKey: ["pending"],
+    queryFn: async () => {
+      const { userRequests } = await getPendingFriendRequests(
+        userData.userAccount.at(0).username
+      );
+      return userRequests;
+    },
+  });
+
+  const {
+    data: dataSent,
+    error: errorSent,
+    isLoading: sentIsLoading,
+  } = useQuery({
+    queryKey: ["sent"],
+    queryFn: async () => {
+      const { userSent } = await getSentFriendRequests(
+        userData.userAccount.at(0).username
+      );
+      return userSent;
+    },
+  });
+
+  if (isLoading || userIsLoading || sentIsLoading)
+    return (
+      <p>
+        <LoaderCircle className="size-8 text-slate-700 animate-spin" />
+      </p>
+    );
+
+  return (
+    <div className="flex flex-col gap-y-4">
+      {data.length > 0 && (
+        <div className="flex flex-col gap-y-2">
+          <span className="text-white font-semibold">{`Received - ${data.length}`}</span>
+          <Separator className="bg-slate-800" />
+          {data.map((user) => (
+            <div key={user.id} className="flex flex-col gap-y-2">
+              <UserDialog user={user} type="request" />
+              <Separator className="bg-slate-800" />
+            </div>
+          ))}
+        </div>
+      )}
+
+      {dataSent.length > 0 && (
+        <div className="flex flex-col gap-y-2">
+          <span className="text-white font-semibold">
+            {`Sent - ${dataSent.length}`}
+          </span>
+          <Separator className="bg-slate-800" />
+          {dataSent.map((user) => (
+            <div key={user.id} className="flex flex-col gap-y-2">
+              <UserDialog user={user} type="sent" />
+              <Separator className="bg-slate-800" />
+            </div>
+          ))}
+        </div>
+      )}
+    </div>
+  );
+}
+
+export default PendingFriends;
