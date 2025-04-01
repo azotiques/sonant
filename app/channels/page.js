@@ -11,7 +11,7 @@ function Page() {
   const [activeTab, setActiveTab] = useState("all");
 
   return (
-    <div className="h-screen bg-zinc-900">
+    <div className="h-screen w-screen bg-zinc-900">
       <FriendsFilter activeTab={activeTab} setActiveTab={setActiveTab} />
       <Separator className="bg-zinc-800" />
       <div className="px-6 py-5">

@@ -1,7 +1,7 @@
 "use client";
 
 import { createClient } from "@/app/_utils/supabase/client";
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import Message from "./Message";
 function MessageList({ channelId, message }) {
   const [messages, setMessages] = useState(message);
@@ -22,11 +22,20 @@ function MessageList({ channelId, message }) {
     )
     .subscribe();
 
+  const bottomOfPanelRef = useRef(null);
+
+  useEffect(() => {
+    if (bottomOfPanelRef.current) {
+      bottomOfPanelRef.current.scrollIntoView();
+    }
+  }, [messages]);
+
   return (
-    <div className="flex flex-col gap-y-3 overflow-auto">
+    <div className="flex flex-col gap-y-1 overflow-auto">
       {messages.map((message) => (
         <Message key={message.id} message={message} />
       ))}
+      <div ref={bottomOfPanelRef}></div>
     </div>
   );
 }

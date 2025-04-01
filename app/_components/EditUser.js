@@ -12,7 +12,7 @@ import { signout } from "../_utils/actions";
 
 function EditUser({ user }) {
   return (
-    <div className="flex flex-row justify-between">
+    <div className="flex flex-row items-center justify-between">
       <div className="flex items-center gap-x-2">
         <div>
           {user.avatar ? (
@@ -29,9 +29,9 @@ function EditUser({ user }) {
       </div>
       <Dialog>
         <DialogTrigger asChild>
-          <button>
-            <Settings className="text-zinc-500 hover:animate-spin" />
-          </button>
+          <Button>
+            <Settings className="text-zinc-500 focus-visible:ring-0 hover:animate-spin" />
+          </Button>
         </DialogTrigger>
         <DialogContent className="flex h-screen border-0 min-w-full bg-zinc-950/90 antialiased">
           <DialogTitle className="w-[40vw]">

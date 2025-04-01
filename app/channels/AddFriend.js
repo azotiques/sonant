@@ -11,7 +11,7 @@ function AddFriend() {
       </span>
       <div className="flex flex-col">
         <form action={sendFriendRequest}>
-          <div className="flex flex-row items-center justify-between gap-x-2 px-4 py-3 w-[40vw] border-zinc-800 shadow-zinc-950/40 shadow-xl border-1 rounded-4xl text-white break-normal">
+          <div className="flex flex-row items-center justify-between gap-x-2 px-4 py-3 w-180 border-zinc-800 shadow-zinc-950/40 shadow-xl border-1 rounded-4xl text-white break-normal">
             <input
               placeholder="Enter your friend's Sonant username."
               className="px-4 py-3 w-[30vw] bg-zinc-950 rounded-3xl text-white break-normal"
