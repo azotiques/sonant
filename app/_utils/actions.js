@@ -90,6 +90,11 @@ export async function sendMessage(formData) {
 
   const { userAccount } = await getUser();
 
+  const { channel } = await getChannelById(formData.get("channel_id"));
+
+  if (channel.at(0).recepients.includes(userAccount.at(0).id) === false)
+    throw new Error("Wrong channel");
+
   const { error } = await supabase
     .from("message")
     .insert([
