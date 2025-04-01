@@ -11,10 +11,9 @@ function Page() {
   const [activeTab, setActiveTab] = useState("all");
 
   return (
-    <div className="h-screen bg-slate-900">
-      <Separator className="bg-slate-800" />
+    <div className="h-screen bg-zinc-900">
       <FriendsFilter activeTab={activeTab} setActiveTab={setActiveTab} />
-      <Separator className="bg-slate-800" />
+      <Separator className="bg-zinc-800" />
       <div className="px-6 py-5">
         {activeTab === "add" && <AddFriend />}
         {activeTab === "all" && <AllFriends />}

@@ -26,7 +26,7 @@ function UserDialog({ user, type }) {
   return (
     <Dialog>
       <DialogTrigger>
-        <div className="flex flex-col px-3 py-2  hover:bg-slate-800 rounded-lg">
+        <div className="flex flex-col px-3 py-2  hover:bg-zinc-800 rounded-lg">
           <div className="flex items-center gap-x-3">
             <Avatar className="size-10">
               <AvatarImage src={user.avatar} />
@@ -38,7 +38,7 @@ function UserDialog({ user, type }) {
           </div>
         </div>
       </DialogTrigger>
-      <DialogContent className="bg-slate-900 border-0">
+      <DialogContent className="bg-zinc-900 border-0">
         <DialogHeader>
           <div className="flex justify-between items-start">
             <div className="flex flex-col gap-y-8">

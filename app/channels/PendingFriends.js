@@ -44,7 +44,7 @@ function PendingFriends() {
   if (isLoading || userIsLoading || sentIsLoading)
     return (
       <p>
-        <LoaderCircle className="size-8 text-slate-700 animate-spin" />
+        <LoaderCircle className="size-8 text-zinc-700 animate-spin" />
       </p>
     );
 
@@ -53,11 +53,11 @@ function PendingFriends() {
       {data.length > 0 && (
         <div className="flex flex-col gap-y-2">
           <span className="text-white font-semibold">{`Received - ${data.length}`}</span>
-          <Separator className="bg-slate-800" />
+          <Separator className="bg-zinc-800" />
           {data.map((user) => (
             <div key={user.id} className="flex flex-col gap-y-2">
               <UserDialog user={user} type="request" />
-              <Separator className="bg-slate-800" />
+              <Separator className="bg-zinc-800" />
             </div>
           ))}
         </div>
@@ -68,11 +68,11 @@ function PendingFriends() {
           <span className="text-white font-semibold">
             {`Sent - ${dataSent.length}`}
           </span>
-          <Separator className="bg-slate-800" />
+          <Separator className="bg-zinc-800" />
           {dataSent.map((user) => (
             <div key={user.id} className="flex flex-col gap-y-2">
               <UserDialog user={user} type="sent" />
-              <Separator className="bg-slate-800" />
+              <Separator className="bg-zinc-800" />
             </div>
           ))}
         </div>

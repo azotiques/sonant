@@ -170,6 +170,8 @@ export async function sendFriendRequest(formData) {
 
   const { userAccount } = await getUser();
 
+  const { users } = await getFriends();
+
   const [{ userSent }, { userRequests }] = await Promise.all([
     getSentFriendRequests(userAccount.at(0).username),
     getPendingFriendRequests(userAccount.at(0).username),
@@ -178,9 +180,10 @@ export async function sendFriendRequest(formData) {
   if (
     userSent.some((user) => user.username === formData.get("username")) ||
     userRequests.some((user) => user.username === formData.get("username")) ||
+    users.some((user) => user.username === formData.get("username")) ||
     formData.get("username") == userAccount.at(0).username
   )
-    throw new Error("Already sent");
+    throw new Error("Already friends");
 
   const { userId } = await getUserIdByUsername(formData.get("username"));
 
@@ -397,12 +400,13 @@ export async function getFriends() {
   const { data: friends, error } = await supabase
     .from("friend")
     .select()
-    .or(`id2.eq.${userAccount.at(0).id},or(id1.eq.${userAccount.at(0).id})`)
+    .or(`id1.eq.${userAccount.at(0).id},id2.eq.${userAccount.at(0).id}`)
     .eq("are_friends", true);
 
   const { data: users } = await supabase
     .from("user")
     .select()
+    .neq("id", userAccount.at(0).id)
     .in(
       "id",
       friends.map((friend) => friend.id1)
