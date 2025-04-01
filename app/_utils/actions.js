@@ -173,7 +173,6 @@ export async function sendFriendRequest(formData) {
   if (
     userSent.some((user) => user.username === formData.get("username")) ||
     userRequests.some((user) => user.username === formData.get("username")) ||
-    getFriends.some((user) => user.username === formData.get("username")) ||
     formData.get("username") == userAccount.at(0).username
   )
     throw new Error("Already sent");
@@ -185,8 +184,6 @@ export async function sendFriendRequest(formData) {
     id2: userId.at(0).id,
     are_friends: false,
   });
-
-  console.log(error);
 }
 
 export async function getUserIdByUsername(username) {
