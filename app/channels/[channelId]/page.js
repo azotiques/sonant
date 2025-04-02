@@ -16,8 +16,8 @@ async function Page({ params }) {
   const { userAccount } = await getUser();
 
   if (
-    !channel.at(0)?.recepients ||
-    channel.at(0)?.recepients.includes(userAccount.at(0).id) === false
+    !channel?.recepients ||
+    channel?.recepients.includes(userAccount.id) === false
   )
     redirect(`/channels`);
 

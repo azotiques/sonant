@@ -7,7 +7,7 @@ import { createClient } from "@/app/_utils/supabase/server";
 import { auth } from "@/auth";
 import { Snowflake } from "@theinternetfolks/snowflake";
 
-export async function login(formData) {
+export async function login(currentState, formData) {
   const supabase = await createClient();
 
   // type-casting here for convenience
@@ -42,7 +42,7 @@ export async function signout() {
   redirect("/channels");
 }
 
-export async function signup(formData) {
+export async function signup(currentState, formData) {
   const supabase = await createClient();
 
   // type-casting here for convenience
@@ -55,7 +55,7 @@ export async function signup(formData) {
   const { error: errorSignUp } = await supabase.auth.signUp(data);
 
   if (errorSignUp) {
-    redirect("/error");
+    return errorSignUp.code;
   }
 
   const userData = {
@@ -92,7 +92,7 @@ export async function sendMessage(formData) {
 
   const { channel } = await getChannelById(formData.get("channel_id"));
 
-  if (channel.at(0).recepients.includes(userAccount.at(0).id) === false)
+  if (channel.recepients.includes(userAccount.id) === false)
     throw new Error("Wrong channel");
 
   const { error } = await supabase
@@ -101,7 +101,7 @@ export async function sendMessage(formData) {
       {
         id: id,
         channel_id: formData.get("channel_id"),
-        author: userAccount.at(0),
+        author: userAccount,
         content: formData.get("content"),
       },
     ])
@@ -137,7 +137,8 @@ export async function getUser() {
   const { data: userAccount, error } = await supabase
     .from("user")
     .select("id, username, avatar, email, global_name")
-    .eq("email", user.email);
+    .eq("email", user.email)
+    .single();
 
   return { userAccount };
 }
@@ -159,7 +160,7 @@ export async function getUserById(id) {
   return { userAccount };
 }
 
-export async function sendFriendRequest(formData) {
+export async function sendFriendRequest(currentState, formData) {
   const supabase = await createClient();
 
   const {
@@ -173,23 +174,25 @@ export async function sendFriendRequest(formData) {
   const { users } = await getFriends();
 
   const [{ userSent }, { userRequests }] = await Promise.all([
-    getSentFriendRequests(userAccount.at(0).username),
-    getPendingFriendRequests(userAccount.at(0).username),
+    getSentFriendRequests(userAccount.username),
+    getPendingFriendRequests(userAccount.username),
   ]);
 
   if (
     userSent.some((user) => user.username === formData.get("username")) ||
     userRequests.some((user) => user.username === formData.get("username")) ||
     users.some((user) => user.username === formData.get("username")) ||
-    formData.get("username") == userAccount.at(0).username
+    formData.get("username") == userAccount.username
   )
-    throw new Error("Already friends");
+    return "You are already friends with that user!";
 
   const { userId } = await getUserIdByUsername(formData.get("username"));
 
+  if (!userId) return "Invalid username!";
+
   const { error } = await supabase.from("friend").insert({
-    id1: userAccount.at(0).id,
-    id2: userId.at(0).id,
+    id1: userAccount.id,
+    id2: userId.id,
     are_friends: false,
   });
 }
@@ -206,7 +209,8 @@ export async function getUserIdByUsername(username) {
   const { data: userId, error } = await supabase
     .from("user")
     .select("id")
-    .eq("username", username);
+    .eq("username", username)
+    .single();
 
   return { userId };
 }
@@ -242,8 +246,8 @@ export async function getPendingFriendRequests(username) {
   const { data: friendRequests, error: friendsError } = await supabase
     .from("friend")
     .select("id1")
-    .eq("id2", userId.at(0).id)
-    .neq("id1", userId.at(0).id)
+    .eq("id2", userId.id)
+    .neq("id1", userId.id)
     .eq("are_friends", false);
 
   const { data: userRequests, error: userError } = await supabase
@@ -271,8 +275,8 @@ export async function getSentFriendRequests(username) {
   const { data: friendSent, error: friendsSentError } = await supabase
     .from("friend")
     .select("id2")
-    .eq("id1", userId.at(0).id)
-    .neq("id2", userId.at(0).id)
+    .eq("id1", userId.id)
+    .neq("id2", userId.id)
     .eq("are_friends", false);
 
   const { data: userSent, error: errorSent } = await supabase
@@ -325,7 +329,26 @@ export async function createChannel(formData) {
 
   const { error } = await supabase.from("channel").insert({
     id: id,
-    recepients: [Number(userAccount.at(0).id), Number(friendAccount.at(0).id)],
+    recepients: [Number(userAccount.id), Number(friendAccount.at(0).id)],
+  });
+}
+
+export async function createChannelByUserId(userId) {
+  const supabase = await createClient();
+
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+
+  if (!user.id) throw new Error("Unauthorized");
+
+  const { userAccount } = await getUser();
+
+  const id = Snowflake.generate();
+
+  const { error } = await supabase.from("channel").insert({
+    id: id,
+    recepients: [Number(userAccount.id), Number(userId)],
   });
 }
 
@@ -345,11 +368,31 @@ export async function getChannel(formData) {
   const { data: channel, error } = await supabase
     .from("channel")
     .select("id::text, created_at, recepients")
-    .contains("recepients", [userAccount.at(0).id, friendAccount.at(0).id]);
+    .contains("recepients", [userAccount.id, friendAccount.at(0).id])
+    .single();
 
-  if (channel.length === 0) createChannel(formData);
+  if (!channel) createChannel(formData);
 
   return { channel };
+}
+
+export async function getChannelsByUserId() {
+  const supabase = await createClient();
+
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+
+  if (!user.id) throw new Error("Unauthorized");
+
+  const { userAccount } = await getUser();
+
+  const { data: channels, error: channelError } = await supabase
+    .from("channel")
+    .select("id::text")
+    .contains("recepients", [userAccount.id]);
+
+  return { channels };
 }
 
 export async function getChannelById(channelId) {
@@ -364,7 +407,8 @@ export async function getChannelById(channelId) {
   const { data: channel, error } = await supabase
     .from("channel")
     .select("id::text, created_at, recepients")
-    .eq("id", channelId);
+    .eq("id", channelId)
+    .single();
 
   return { channel };
 }
@@ -380,10 +424,10 @@ export async function goToChannel(formData) {
 
   const { channel } = await getChannel(formData);
 
-  if (channel.at(0).recepients.includes(Number(formData.get("id"))) === false)
+  if (channel.recepients.includes(Number(formData.get("id"))) === false)
     redirect(`/channels`);
 
-  redirect(`/channels/${channel.at(0).id}`);
+  redirect(`/channels/${channel.id}`);
 }
 
 export async function getFriends() {
@@ -400,13 +444,13 @@ export async function getFriends() {
   const { data: friends, error } = await supabase
     .from("friend")
     .select()
-    .or(`id1.eq.${userAccount.at(0).id},id2.eq.${userAccount.at(0).id}`)
+    .or(`id1.eq.${userAccount.id},id2.eq.${userAccount.id}`)
     .eq("are_friends", true);
 
   const { data: users } = await supabase
     .from("user")
     .select()
-    .neq("id", userAccount.at(0).id)
+    .neq("id", userAccount.id)
     .in(
       "id",
       friends.map((friend) => friend.id1)

@@ -9,19 +9,19 @@ import { Cog, Edit, LogOut, Settings, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
 import { signout } from "../_utils/actions";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 
 function EditUser({ user }) {
   return (
     <div className="flex flex-row items-center justify-between">
       <div className="flex items-center gap-x-2">
         <div>
-          {user.avatar ? (
-            <img className="w-12 h-12 rounded-full" src={user.avatar} />
-          ) : (
-            <span className="w-12 h-12 text-xl font-bold flex items-center justify-center rounded-full bg-rose-600">
-              {user.global_name.at(0)}
-            </span>
-          )}
+          <Avatar className="size-10">
+            <AvatarImage>
+              <img className="w-12 h-12 rounded-full" src={user.avatar} />
+            </AvatarImage>
+            <AvatarFallback>{user.global_name.at(0)}</AvatarFallback>
+          </Avatar>
         </div>
         <div>
           <span className="text-zinc-500">{user.global_name}</span>
@@ -53,18 +53,17 @@ function EditUser({ user }) {
             <DialogHeader className="flex justify-center items-center">
               <div className="bg-zinc-950 rounded-xl px-7 py-6">
                 <div className="flex px-5 py-4 items-center gap-x-5">
-                  <div>
-                    {user.avatar ? (
+                  <Avatar className="size-24">
+                    <AvatarImage>
                       <img
-                        className="w-20 h-20 rounded-full"
+                        className="w-12 h-12 rounded-full"
                         src={user.avatar}
                       />
-                    ) : (
-                      <span className="w-20 h-20 text-2xl font-bold flex items-center justify-center rounded-full bg-rose-600">
-                        {user.global_name.at(0)}
-                      </span>
-                    )}
-                  </div>
+                    </AvatarImage>
+                    <AvatarFallback className="text-4xl">
+                      {user.global_name.at(0)}
+                    </AvatarFallback>
+                  </Avatar>
                   <div>
                     <span className="text-white text-2xl font-semibold">
                       {user.global_name}

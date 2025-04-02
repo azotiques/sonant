@@ -21,7 +21,7 @@ function PendingFriends() {
     queryKey: ["pending"],
     queryFn: async () => {
       const { userRequests } = await getPendingFriendRequests(
-        userData.userAccount.at(0).username
+        userData.userAccount.username
       );
       return userRequests;
     },
@@ -35,7 +35,7 @@ function PendingFriends() {
     queryKey: ["sent"],
     queryFn: async () => {
       const { userSent } = await getSentFriendRequests(
-        userData.userAccount.at(0).username
+        userData.userAccount.username
       );
       return userSent;
     },

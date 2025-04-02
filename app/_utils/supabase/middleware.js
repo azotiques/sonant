@@ -45,5 +45,15 @@ export async function updateSession(request) {
     return NextResponse.redirect(url);
   }
 
+  if (
+    user &&
+    (request.nextUrl.clone().pathname === "/signin" ||
+      request.nextUrl.clone().pathname === "/signup")
+  ) {
+    const url = request.nextUrl.clone();
+    url.pathname = "/channels";
+    return NextResponse.redirect(url);
+  }
+
   return supabaseResponse;
 }

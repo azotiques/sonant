@@ -6,7 +6,7 @@ async function Sidebar() {
 
   return (
     <div className="bg-zinc-900 rounded-lg px-3 py-2 border-zinc-800 shadow-zinc-600/10 shadow-xl border-1">
-      <EditUser user={userAccount.at(0)} />
+      <EditUser user={userAccount} />
     </div>
   );
 }

@@ -1,18 +1,22 @@
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Separator } from "@/components/ui/separator";
 import { format } from "date-fns";
 
 function Message({ message }) {
   return (
     <div className="flex flex-col gap-y-1 px-2">
-      <Separator className="bg-zinc-800" />
-      <div className="flex flex-row items-center gap-x-3 hover:bg-zinc-800 rounded-lg px-3 py-2">
-        {message.author.avatar ? (
-          <img className="w-12 h-12 rounded-full" src={message.author.avatar} />
-        ) : (
-          <span className="w-12 h-12 text-xl font-bold flex items-center justify-center rounded-full bg-rose-600">
+      <div className="flex flex-row items-center gap-x-3 hover:bg-zinc-800 px-3 py-2">
+        <Avatar className="size-10">
+          <AvatarImage>
+            <img
+              className="w-12 h-12 rounded-full"
+              src={message.author.avatar}
+            />
+          </AvatarImage>
+          <AvatarFallback className>
             {message.author.global_name.at(0)}
-          </span>
-        )}
+          </AvatarFallback>
+        </Avatar>
 
         <div className="flex flex-col">
           <div className="flex flex-row gap-x-3 items-center">

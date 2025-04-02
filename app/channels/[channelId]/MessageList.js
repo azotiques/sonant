@@ -3,6 +3,7 @@
 import { createClient } from "@/app/_utils/supabase/client";
 import { useEffect, useRef, useState } from "react";
 import Message from "./Message";
+import { getUser } from "@/app/_utils/actions";
 function MessageList({ channelId, message }) {
   const [messages, setMessages] = useState(message);
 
@@ -32,9 +33,13 @@ function MessageList({ channelId, message }) {
 
   return (
     <div className="flex flex-col gap-y-1 overflow-auto">
-      {messages.map((message) => (
-        <Message key={message.id} message={message} />
-      ))}
+      {messages.map((message) => {
+        return (
+          <div key={message.id}>
+            <Message message={message} />
+          </div>
+        );
+      })}
       <div ref={bottomOfPanelRef}></div>
     </div>
   );
