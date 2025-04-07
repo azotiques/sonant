@@ -8,6 +8,11 @@ import {
 } from "@/components/ui/resizable";
 import { redirect } from "next/navigation";
 import LogoButton from "./LogoButton";
+import {
+  getPendingFriendRequests,
+  getSentFriendRequests,
+  getUser,
+} from "../_utils/actions";
 
 function Layout({ children }) {
   return (

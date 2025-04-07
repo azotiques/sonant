@@ -190,10 +190,16 @@ export async function sendFriendRequest(currentState, formData) {
 
   if (!userId) return "Invalid username!";
 
+  const { channelId } = await createChannelWithFriends(
+    Number(userAccount.id),
+    Number(userId.id)
+  );
+
   const { error } = await supabase.from("friend").insert({
     id1: userAccount.id,
     id2: userId.id,
     are_friends: false,
+    channelId: channelId,
   });
 }
 
@@ -245,18 +251,25 @@ export async function getPendingFriendRequests(username) {
 
   const { data: friendRequests, error: friendsError } = await supabase
     .from("friend")
-    .select("id1")
+    .select("id1, channelId::text")
     .eq("id2", userId.id)
     .neq("id1", userId.id)
     .eq("are_friends", false);
 
-  const { data: userRequests, error: userError } = await supabase
+  const { data: users, error: userError } = await supabase
     .from("user")
     .select("*")
     .in(
       "id",
       friendRequests.map((friend) => friend.id1)
     );
+
+  const channelIds = friendRequests.map((friend) => friend.channelId).reverse();
+
+  const userRequests = users.map((user, i) => ({
+    ...user,
+    channelId: channelIds[i],
+  }));
 
   return { userRequests };
 }
@@ -274,18 +287,25 @@ export async function getSentFriendRequests(username) {
 
   const { data: friendSent, error: friendsSentError } = await supabase
     .from("friend")
-    .select("id2")
+    .select("id2, channelId::text")
     .eq("id1", userId.id)
     .neq("id2", userId.id)
     .eq("are_friends", false);
 
-  const { data: userSent, error: errorSent } = await supabase
+  const { data: users, error: errorSent } = await supabase
     .from("user")
     .select("*")
     .in(
       "id",
       friendSent.map((friend) => friend.id2)
     );
+
+  const channelIds = friendSent.map((friend) => friend.channelId).reverse();
+
+  const userSent = users.map((user, i) => ({
+    ...user,
+    channelId: channelIds[i],
+  }));
 
   return { userSent };
 }
@@ -310,6 +330,31 @@ export async function acceptFriendRequest(formData) {
     .update({ are_friends: true })
     .eq("id2", formData.get("id"))
     .select();
+}
+
+export async function createChannelWithFriends(id1, id2) {
+  const supabase = await createClient();
+
+  const {
+    data: { session },
+  } = await supabase.auth.getSession();
+
+  if (!session.access_token) throw new Error("Unauthorized");
+
+  const id = Snowflake.generate();
+
+  const { data, error } = await supabase
+    .from("channel")
+    .insert({
+      id: id,
+      recepients: [id1, id2],
+    })
+    .select("id::text")
+    .single();
+
+  const channelId = data.id;
+
+  return { channelId };
 }
 
 export async function createChannel(formData) {
@@ -443,18 +488,26 @@ export async function getFriends() {
 
   const { data: friends, error } = await supabase
     .from("friend")
-    .select()
+    .select("id, id1, id2, are_friends, channelId::text")
     .or(`id1.eq.${userAccount.id},id2.eq.${userAccount.id}`)
     .eq("are_friends", true);
 
-  const { data: users } = await supabase
+  const { data: usersData } = await supabase
     .from("user")
     .select()
     .neq("id", userAccount.id)
-    .in(
-      "id",
-      friends.map((friend) => friend.id1)
+    .or(
+      `id.in.(${friends.map((friend) => friend.id1)}),or(id.in.(${friends.map(
+        (friend) => friend.id2
+      )}))`
     );
+
+  const channelIds = friends.map((friend) => friend.channelId).reverse();
+
+  const users = usersData.map((obj, i) => ({
+    ...obj,
+    channelId: channelIds[i],
+  }));
 
   return { users };
 }

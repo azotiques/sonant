@@ -11,44 +11,7 @@ import useUser from "@/hooks/useUser";
 import { Separator } from "@/components/ui/separator";
 import { createClient } from "../_utils/supabase/client";
 
-function PendingFriends() {
-  const {
-    data: userData,
-    error: userError,
-    isLoading: userIsLoading,
-  } = useUser();
-
-  const { data, error, isLoading } = useQuery({
-    queryKey: ["pending"],
-    queryFn: async () => {
-      const { userRequests } = await getPendingFriendRequests(
-        userData.userAccount.username
-      );
-      return userRequests;
-    },
-  });
-
-  const {
-    data: dataSent,
-    error: errorSent,
-    isLoading: sentIsLoading,
-  } = useQuery({
-    queryKey: ["sent"],
-    queryFn: async () => {
-      const { userSent } = await getSentFriendRequests(
-        userData.userAccount.username
-      );
-      return userSent;
-    },
-  });
-
-  if (isLoading || userIsLoading || sentIsLoading)
-    return (
-      <p>
-        <LoaderCircle className="size-8 text-zinc-700 animate-spin" />
-      </p>
-    );
-
+function PendingFriends({ data, dataSent }) {
   return (
     <div className="flex flex-col gap-y-4">
       {data.length > 0 && (

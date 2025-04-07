@@ -21,22 +21,40 @@ import {
   MessageSquareIcon,
   Send,
 } from "lucide-react";
+import Link from "next/link";
 
 function UserDialog({ user, type }) {
   return (
     <Dialog>
       <DialogTrigger>
-        <div className="flex flex-col px-3 py-2  hover:bg-zinc-800 rounded-lg">
-          <div className="flex items-center gap-x-3">
-            <Avatar className="size-10">
-              <AvatarImage src={user.avatar} />
-              <AvatarFallback>
-                {user.username.at(0).toUpperCase()}
-              </AvatarFallback>
-            </Avatar>
-            <div className="text-white">{user.global_name}</div>
+        {type === "friend" && (
+          <Link href={`/channels/${user.channelId}`}>
+            <div className="flex flex-col px-3 py-2  hover:bg-zinc-800 rounded-lg">
+              <div className="flex items-center gap-x-3">
+                <Avatar className="size-10">
+                  <AvatarImage src={user.avatar} />
+                  <AvatarFallback>
+                    {user.username.at(0).toUpperCase()}
+                  </AvatarFallback>
+                </Avatar>
+                <div className="text-white">{user.global_name}</div>
+              </div>
+            </div>
+          </Link>
+        )}
+        {type !== "friend" && (
+          <div className="flex flex-col px-3 py-2  hover:bg-zinc-800 rounded-lg">
+            <div className="flex items-center gap-x-3">
+              <Avatar className="size-10">
+                <AvatarImage src={user.avatar} />
+                <AvatarFallback>
+                  {user.username.at(0).toUpperCase()}
+                </AvatarFallback>
+              </Avatar>
+              <div className="text-white">{user.global_name}</div>
+            </div>
           </div>
-        </div>
+        )}
       </DialogTrigger>
       <DialogContent className="bg-zinc-900 border-0">
         <DialogHeader>
@@ -66,31 +84,31 @@ function UserDialog({ user, type }) {
                     <input type="hidden" name="id" value={user.id} />
                     <Button>Accept friend request</Button>
                   </form>
-                  <form action={goToChannel}>
+                  <Link href={`/channels/${user.channelId}`}>
                     <input type="hidden" name="id" value={user.id} />
                     <Button>
                       Send message <Send />
                     </Button>
-                  </form>
+                  </Link>
                 </div>
               )}
 
               {type === "sent" && (
-                <form action={goToChannel}>
+                <Link href={`/channels/${user.channelId}`}>
                   <input type="hidden" name="id" value={user.id} />
                   <Button>
                     Send message <Send />
                   </Button>
-                </form>
+                </Link>
               )}
 
               {type === "friend" && (
-                <form action={goToChannel}>
+                <Link href={`/channels/${user.channelId}`}>
                   <input type="hidden" name="id" value={user.id} />
                   <Button>
                     Send message <Send />
                   </Button>
-                </form>
+                </Link>
               )}
             </div>
           </div>

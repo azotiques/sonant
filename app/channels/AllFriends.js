@@ -1,29 +1,12 @@
+"use client";
+
 import { useQuery } from "@tanstack/react-query";
 import { getFriends } from "../_utils/actions";
 import { LoaderCircle } from "lucide-react";
 import { Separator } from "@/components/ui/separator";
 import UserDialog from "../_components/UserDialog";
 
-function AllFriends() {
-  const {
-    data: friends,
-    error,
-    isLoading,
-  } = useQuery({
-    queryKey: ["friends"],
-    queryFn: async () => {
-      const { users } = await getFriends();
-      return users;
-    },
-  });
-
-  if (isLoading)
-    return (
-      <p>
-        <LoaderCircle className="size-8 text-zinc-700 animate-spin" />
-      </p>
-    );
-
+function AllFriends({ users: friends }) {
   return (
     <div>
       {friends.length > 0 && (

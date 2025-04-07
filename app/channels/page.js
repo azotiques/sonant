@@ -1,25 +1,24 @@
-"use client";
+import {
+  getFriends,
+  getPendingFriendRequests,
+  getSentFriendRequests,
+  getUser,
+} from "../_utils/actions";
+import Tabs from "./Tabs";
 
-import { useState } from "react";
-import FriendsFilter from "./FriendsFilter";
-import AddFriend from "./AddFriend";
-import AllFriends from "./AllFriends";
-import { Separator } from "@/components/ui/separator";
-import PendingFriends from "./PendingFriends";
-
-function Page() {
-  const [activeTab, setActiveTab] = useState("all");
+async function Page() {
+  const { userAccount } = await getUser();
+  const { users } = await getFriends();
+  const { userRequests } = await getPendingFriendRequests(userAccount.username);
+  const { userSent } = await getSentFriendRequests(userAccount.username);
 
   return (
-    <div className="h-screen w-screen bg-zinc-900">
-      <FriendsFilter activeTab={activeTab} setActiveTab={setActiveTab} />
-      <Separator className="bg-zinc-800" />
-      <div className="px-6 py-5">
-        {activeTab === "add" && <AddFriend />}
-        {activeTab === "all" && <AllFriends />}
-        {activeTab === "pending" && <PendingFriends />}
-      </div>
-    </div>
+    <Tabs
+      userAccount={userAccount}
+      users={users}
+      userRequests={userRequests}
+      userSent={userSent}
+    />
   );
 }
 
