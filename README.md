@@ -1,5 +1,10 @@
 ## Sonant
 
-- [ ] Make sending messages send you directly to the page with extra http requests
+# TODO immediately
 
-- [ ] Introduce DM servers, like /@me/431263422347 
+- [ ] Fix some UI things
+- [ ] Add last message sent in the UI
+
+# TODO in the future
+
+- [ ] Add WebRTC for voice and video calling
