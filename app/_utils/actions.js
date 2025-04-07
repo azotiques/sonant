@@ -83,10 +83,10 @@ export async function sendMessage(formData) {
   const supabase = await createClient();
 
   const {
-    data: { user },
-  } = await supabase.auth.getUser();
+    data: { session },
+  } = await supabase.auth.getSession();
 
-  if (!user.id) throw new Error("Unauthorized");
+  if (!session.access_token) throw new Error("Unauthorized");
 
   const { userAccount } = await getUser();
 
@@ -112,10 +112,10 @@ export async function getMessages(channelId) {
   const supabase = await createClient();
 
   const {
-    data: { user },
-  } = await supabase.auth.getUser();
+    data: { session },
+  } = await supabase.auth.getSession();
 
-  if (!user.id) throw new Error("Unauthorized");
+  if (!session.access_token) throw new Error("Unauthorized");
 
   const { data: message, error } = await supabase
     .from("message")
@@ -147,10 +147,10 @@ export async function getUserById(id) {
   const supabase = await createClient();
 
   const {
-    data: { user },
-  } = await supabase.auth.getUser();
+    data: { session },
+  } = await supabase.auth.getSession();
 
-  if (!user.id) throw new Error("Unauthorized");
+  if (!session.access_token) throw new Error("Unauthorized");
 
   const { data: userAccount, error } = await supabase
     .from("user")
@@ -164,10 +164,10 @@ export async function sendFriendRequest(currentState, formData) {
   const supabase = await createClient();
 
   const {
-    data: { user },
-  } = await supabase.auth.getUser();
+    data: { session },
+  } = await supabase.auth.getSession();
 
-  if (!user.id) throw new Error("Unauthorized");
+  if (!session.access_token) throw new Error("Unauthorized");
 
   const { userAccount } = await getUser();
 
@@ -201,10 +201,10 @@ export async function getUserIdByUsername(username) {
   const supabase = await createClient();
 
   const {
-    data: { user },
-  } = await supabase.auth.getUser();
+    data: { session },
+  } = await supabase.auth.getSession();
 
-  if (!user.id) throw new Error("Unauthorized");
+  if (!session.access_token) throw new Error("Unauthorized");
 
   const { data: userId, error } = await supabase
     .from("user")
@@ -219,10 +219,10 @@ export async function getUserIdByEmail(email) {
   const supabase = await createClient();
 
   const {
-    data: { user },
-  } = await supabase.auth.getUser();
+    data: { session },
+  } = await supabase.auth.getSession();
 
-  if (!user.id) throw new Error("Unauthorized");
+  if (!session.access_token) throw new Error("Unauthorized");
 
   const { data: userId, error } = await supabase
     .from("user")
@@ -236,10 +236,10 @@ export async function getPendingFriendRequests(username) {
   const supabase = await createClient();
 
   const {
-    data: { user },
-  } = await supabase.auth.getUser();
+    data: { session },
+  } = await supabase.auth.getSession();
 
-  if (!user.id) throw new Error("Unauthorized");
+  if (!session.access_token) throw new Error("Unauthorized");
 
   const { userId } = await getUserIdByUsername(username);
 
@@ -265,10 +265,10 @@ export async function getSentFriendRequests(username) {
   const supabase = await createClient();
 
   const {
-    data: { user },
-  } = await supabase.auth.getUser();
+    data: { session },
+  } = await supabase.auth.getSession();
 
-  if (!user.id) throw new Error("Unauthorized");
+  if (!session.access_token) throw new Error("Unauthorized");
 
   const { userId } = await getUserIdByUsername(username);
 
@@ -294,10 +294,10 @@ export async function acceptFriendRequest(formData) {
   const supabase = await createClient();
 
   const {
-    data: { user },
-  } = await supabase.auth.getUser();
+    data: { session },
+  } = await supabase.auth.getSession();
 
-  if (!user.id) throw new Error("Unauthorized");
+  if (!session.access_token) throw new Error("Unauthorized");
 
   const { data: data1, error: error1 } = await supabase
     .from("friend")
@@ -316,10 +316,10 @@ export async function createChannel(formData) {
   const supabase = await createClient();
 
   const {
-    data: { user },
-  } = await supabase.auth.getUser();
+    data: { session },
+  } = await supabase.auth.getSession();
 
-  if (!user.id) throw new Error("Unauthorized");
+  if (!session.access_token) throw new Error("Unauthorized");
 
   const { userAccount } = await getUser();
 
@@ -337,10 +337,10 @@ export async function createChannelByUserId(userId) {
   const supabase = await createClient();
 
   const {
-    data: { user },
-  } = await supabase.auth.getUser();
+    data: { session },
+  } = await supabase.auth.getSession();
 
-  if (!user.id) throw new Error("Unauthorized");
+  if (!session.access_token) throw new Error("Unauthorized");
 
   const { userAccount } = await getUser();
 
@@ -356,10 +356,10 @@ export async function getChannel(formData) {
   const supabase = await createClient();
 
   const {
-    data: { user },
-  } = await supabase.auth.getUser();
+    data: { session },
+  } = await supabase.auth.getSession();
 
-  if (!user.id) throw new Error("Unauthorized");
+  if (!session.access_token) throw new Error("Unauthorized");
 
   const { userAccount } = await getUser();
 
@@ -380,10 +380,10 @@ export async function getChannelsByUserId() {
   const supabase = await createClient();
 
   const {
-    data: { user },
-  } = await supabase.auth.getUser();
+    data: { session },
+  } = await supabase.auth.getSession();
 
-  if (!user.id) throw new Error("Unauthorized");
+  if (!session.access_token) throw new Error("Unauthorized");
 
   const { userAccount } = await getUser();
 
@@ -399,10 +399,10 @@ export async function getChannelById(channelId) {
   const supabase = await createClient();
 
   const {
-    data: { user },
-  } = await supabase.auth.getUser();
+    data: { session },
+  } = await supabase.auth.getSession();
 
-  if (!user.id) throw new Error("Unauthorized");
+  if (!session.access_token) throw new Error("Unauthorized");
 
   const { data: channel, error } = await supabase
     .from("channel")
@@ -417,10 +417,10 @@ export async function goToChannel(formData) {
   const supabase = await createClient();
 
   const {
-    data: { user },
-  } = await supabase.auth.getUser();
+    data: { session },
+  } = await supabase.auth.getSession();
 
-  if (!user.id) throw new Error("Unauthorized");
+  if (!session.access_token) throw new Error("Unauthorized");
 
   const { channel } = await getChannel(formData);
 
@@ -434,10 +434,10 @@ export async function getFriends() {
   const supabase = await createClient();
 
   const {
-    data: { user },
-  } = await supabase.auth.getUser();
+    data: { session },
+  } = await supabase.auth.getSession();
 
-  if (!user.id) throw new Error("Unauthorized");
+  if (!session.access_token) throw new Error("Unauthorized");
 
   const { userAccount } = await getUser();
 

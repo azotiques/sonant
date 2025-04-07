@@ -9,6 +9,7 @@ import { LoaderCircle } from "lucide-react";
 import UserDialog from "../_components/UserDialog";
 import useUser from "@/hooks/useUser";
 import { Separator } from "@/components/ui/separator";
+import { createClient } from "../_utils/supabase/client";
 
 function PendingFriends() {
   const {

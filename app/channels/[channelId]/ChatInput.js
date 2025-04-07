@@ -20,12 +20,12 @@ function ChatInput({ channelId }) {
     <div className="flex flex-col justify-center items-center">
       <form action={sendMessage} onSubmit={handleSubmit}>
         <input name="channel_id" type="hidden" value={channelId} />
-        <div className="flex flex-row px-4 py-3 w-[40vw] border-zinc-800 shadow-zinc-950/40 shadow-xl border-1 rounded-4xl text-white break-normal">
+        <div className="flex flex-row px-4 py-3 md:w-[40vw] md:h-18 xs:w-[70vw] xs:h-15 border-zinc-800 shadow-zinc-950/40 shadow-xl border-1 rounded-4xl text-white break-normal">
           <input
             placeholder="Message"
             onChange={handleInput}
             value={message}
-            className="px-4 py-3 w-[30vw] bg-zinc-950 rounded-3xl text-white break-normal"
+            className="px-4 py-3 md:w-[30vw] bg-zinc-950 xs:w-[50vw] md:text-md xs:text-xs rounded-3xl text-white break-normal"
             name="content"
             type="text"
           />

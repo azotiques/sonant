@@ -13,10 +13,11 @@ function Layout({ children }) {
   return (
     <div className="h-screen">
       <Navigation />
+
       <div className="flex h-[calc(100vh-39px)] bg-zinc-950">
         <ResizablePanelGroup direction="horizontal">
           <ResizablePanel
-            className="px-3 py-3 gap-y-2 flex flex-col justify-between"
+            className="px-3 py-3 gap-y-2 md:flex flex-col xs:hidden justify-between"
             defaultSize={12}
             minSize={10}
             maxSize={18}
