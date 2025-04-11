@@ -24,34 +24,34 @@ function EditUser({ user }) {
           </Avatar>
         </div>
         <div>
-          <span className="text-zinc-500">{user.global_name}</span>
+          <span className="text-neutral-500">{user.global_name}</span>
         </div>
       </div>
       <Dialog>
         <DialogTrigger asChild>
           <Button>
-            <Settings className="text-zinc-500 focus-visible:ring-0 hover:animate-spin" />
+            <Settings className="text-neutral-500 focus-visible:ring-0 hover:animate-spin" />
           </Button>
         </DialogTrigger>
-        <DialogContent className="flex h-screen border-0 min-w-full bg-zinc-950/90 antialiased">
+        <DialogContent className="flex h-screen border-0 min-w-full bg-neutral-950/90 antialiased">
           <DialogTitle className="w-[40vw]">
             <div className="flex flex-col gap-y-6">
-              <button className="text-zinc-500 text-sm flex items-center gap-x-2 hover:bg-zinc-900 rounded-lg px-4 py-3 transition-all">
+              <button className="text-neutral-500 text-sm flex items-center gap-x-2 hover:bg-neutral-900 rounded-lg px-4 py-3 transition-all">
                 Edit Profile
-                <Edit className="size-4 text-zinc-500" />
+                <Edit className="size-4 text-neutral-500" />
               </button>
-              <Separator className="bg-zinc-800" />
+              <Separator className="bg-neutral-800" />
               <form action={signout}>
-                <button className="text-zinc-500 text-sm flex items-center gap-x-2 hover:bg-zinc-900 rounded-lg px-4 py-3 transition-all">
+                <button className="text-neutral-500 text-sm flex items-center gap-x-2 hover:bg-neutral-900 rounded-lg px-4 py-3 transition-all">
                   Log Out
-                  <LogOut className="size-4 text-zinc-500" />
+                  <LogOut className="size-4 text-neutral-500" />
                 </button>
               </form>
             </div>
           </DialogTitle>
-          <div className="flex justify-center bg-zinc-900 h-screen w-screen rounded-lg">
+          <div className="flex justify-center bg-neutral-900 h-screen w-screen rounded-lg">
             <DialogHeader className="flex justify-center items-center">
-              <div className="bg-zinc-950 rounded-xl px-7 py-6">
+              <div className="bg-neutral-950 rounded-xl px-7 py-6">
                 <div className="flex px-5 py-4 items-center gap-x-5">
                   <Avatar className="size-24">
                     <AvatarImage>
@@ -70,14 +70,14 @@ function EditUser({ user }) {
                     </span>
                   </div>
                 </div>
-                <div className="bg-zinc-950 border-zinc-900 border-1 shadow-zinc-500/5 shadow-lg rounded-lg">
+                <div className="bg-neutral-950 border-neutral-900 border-1 shadow-neutral-500/5 shadow-lg rounded-lg">
                   <div className="flex flex-col gap-y-3 w-200 px-5 py-4">
                     <div className="flex justify-between">
                       <div className="flex flex-col items-start">
-                        <button className="text-zinc-500 font-semibold">
+                        <button className="text-neutral-500 font-semibold">
                           Display Name
                         </button>
-                        <button className="text-zinc-500 ">
+                        <button className="text-neutral-500 ">
                           {user.global_name}
                         </button>
                       </div>
@@ -85,10 +85,10 @@ function EditUser({ user }) {
                     </div>
                     <div className="flex justify-between">
                       <div className="flex flex-col items-start">
-                        <button className="text-zinc-500 font-semibold">
+                        <button className="text-neutral-500 font-semibold">
                           Username
                         </button>
-                        <button className="text-zinc-500 ">
+                        <button className="text-neutral-500 ">
                           {user.global_name}
                         </button>
                       </div>
@@ -96,10 +96,12 @@ function EditUser({ user }) {
                     </div>
                     <div className="flex justify-between">
                       <div className="flex flex-col items-start">
-                        <button className="text-zinc-500 font-semibold">
+                        <button className="text-neutral-500 font-semibold">
                           Email
                         </button>
-                        <button className="text-zinc-500 ">{user.email}</button>
+                        <button className="text-neutral-500 ">
+                          {user.email}
+                        </button>
                       </div>
                       <Button className="text-white">Edit</Button>
                     </div>

@@ -2,20 +2,18 @@ import Link from "next/link";
 import Button from "./Button";
 function LandingPage() {
   return (
-    <section>
-      <div className="h-screen flex flex-col items-center justify-center gap-18">
-        <h1 className="md:text-9xl font-semibold">{"SONANT"}</h1>
-        <p className="md:text-2xl font-mono">
-          {"The communication app for music producers, by producers."}
-        </p>
-        <Link href="/channels/friends/all">
-          {" "}
-          <Button className="font-mono" type="large-solid">
-            {"Open Sonant in your browser"}
-          </Button>
-        </Link>
+    <div className="bg-black">
+      <div className="h-screen flex flex-col items-center justify-center">
+        <div className="flex flex-col gap-y-2 align-center items-center">
+          <div className="text-white text-4xl font-semibold">
+            Messaging for musicians, by musicians.
+          </div>
+          <div className="text-white text-2xl font-extralight">
+            The way to collaborate we all needed.
+          </div>
+        </div>
       </div>
-    </section>
+    </div>
   );
 }
 

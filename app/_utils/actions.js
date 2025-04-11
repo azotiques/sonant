@@ -95,6 +95,8 @@ export async function sendMessage(formData) {
   if (channel.recepients.includes(userAccount.id) === false)
     throw new Error("Wrong channel");
 
+  if (!(formData.get("content").length > 0)) return;
+
   const { error } = await supabase
     .from("message")
     .insert([

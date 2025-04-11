@@ -29,7 +29,7 @@ function UserDialog({ user, type }) {
       <DialogTrigger>
         {type === "friend" && (
           <Link href={`/channels/${user.channelId}`}>
-            <div className="flex flex-col px-3 py-2  hover:bg-zinc-800 rounded-lg">
+            <div className="flex flex-col px-3 py-2  hover:bg-neutral-800 rounded-lg">
               <div className="flex items-center gap-x-3">
                 <Avatar className="size-10">
                   <AvatarImage src={user.avatar} />
@@ -43,7 +43,7 @@ function UserDialog({ user, type }) {
           </Link>
         )}
         {type !== "friend" && (
-          <div className="flex flex-col px-3 py-2  hover:bg-zinc-800 rounded-lg">
+          <div className="flex flex-col px-3 py-2  hover:bg-neutral-800 rounded-lg">
             <div className="flex items-center gap-x-3">
               <Avatar className="size-10">
                 <AvatarImage src={user.avatar} />
@@ -56,7 +56,7 @@ function UserDialog({ user, type }) {
           </div>
         )}
       </DialogTrigger>
-      <DialogContent className="bg-zinc-900 border-0">
+      <DialogContent className="bg-neutral-900 border-0">
         <DialogHeader>
           <div className="flex justify-between items-start">
             <div className="flex flex-col gap-y-8">

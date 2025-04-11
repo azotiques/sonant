@@ -5,7 +5,7 @@ import { format } from "date-fns";
 function Message({ message }) {
   return (
     <div className="flex flex-col gap-y-1 px-2">
-      <div className="flex flex-row items-center gap-x-3 hover:bg-zinc-800 px-3 py-2">
+      <div className="flex flex-row items-center gap-x-3 hover:bg-neutral-800 px-3 py-2">
         <Avatar className="size-10">
           <AvatarImage>
             <img

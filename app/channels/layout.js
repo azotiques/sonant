@@ -19,7 +19,7 @@ function Layout({ children }) {
     <div className="h-screen">
       <Navigation />
 
-      <div className="flex h-[calc(100vh-39px)] bg-zinc-950">
+      <div className="flex h-[calc(100vh-39px)] bg-neutral-900">
         <ResizablePanelGroup direction="horizontal">
           <ResizablePanel
             className="px-3 py-3 gap-y-2 md:flex flex-col xs:hidden justify-between"
@@ -27,7 +27,7 @@ function Layout({ children }) {
             minSize={10}
             maxSize={18}
           >
-            <div className=" rounded-xl border-zinc-800 border-r-1 h-screen w-16 items-center py-2 flex flex-col">
+            <div className=" rounded-xl border-neutral-800 border-r-1 h-screen w-16 items-center py-2 flex flex-col">
               <LogoButton />
             </div>
 
@@ -35,10 +35,10 @@ function Layout({ children }) {
           </ResizablePanel>
           <ResizableHandle className="bg-transparent h-[calc(100vh-px)]" />
           <ResizablePanel
-            className="rounded-tl-lg border-zinc-800 border-1"
+            className="rounded-tl-lg border-neutral-800 border-1"
             defaultSize={12}
           >
-            <div className="bg-zinc-900">{children}</div>
+            <div className="bg-neutral-900">{children}</div>
           </ResizablePanel>
         </ResizablePanelGroup>
       </div>

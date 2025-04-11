@@ -22,8 +22,9 @@ async function Page({ params }) {
     redirect(`/channels`);
 
   return (
-    <div className="h-[calc(100vh-39px)] bg-zinc-900 flex flex-col justify-between px-5 py-4">
+    <div className="h-[calc(100vh-39px)] bg-neutral-900 flex flex-col justify-between px-5 py-4">
       <MessageList channelId={channelId} message={message} />
+
       <ChatInput channelId={channelId} />
     </div>
   );

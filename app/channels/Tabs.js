@@ -10,9 +10,9 @@ import { Separator } from "@/components/ui/separator";
 function Tabs({ userAccount, users, userRequests, userSent }) {
   const [activeTab, setActiveTab] = useState("all");
   return (
-    <div className="h-screen w-screen bg-zinc-900">
+    <div className="h-screen w-screen bg-neutral-900">
       <FriendsFilter activeTab={activeTab} setActiveTab={setActiveTab} />
-      <Separator className="bg-zinc-800" />
+      <Separator className="bg-neutral-800" />
       <div className="px-6 py-5">
         {activeTab === "add" && <AddFriend />}
         {activeTab === "all" && <AllFriends users={users} />}
