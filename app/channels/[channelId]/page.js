@@ -8,6 +8,8 @@ import {
   getUser,
 } from "@/app/_utils/actions";
 import { redirect } from "next/navigation";
+import { Suspense } from "react";
+import Loading from "./loading";
 
 async function Page({ params }) {
   const { channelId } = await params;

@@ -1,5 +1,4 @@
 import { LoaderCircle } from "lucide-react";
-import Logo from "./_components/Logo";
 
 function Loading() {
   return (

@@ -39,7 +39,7 @@ export async function signout() {
   }
 
   revalidatePath("/", "layout");
-  redirect("/channels");
+  redirect("/");
 }
 
 export async function signup(currentState, formData) {
@@ -85,8 +85,6 @@ export async function sendMessage(formData) {
   const {
     data: { session },
   } = await supabase.auth.getSession();
-
-  if (!session.access_token) throw new Error("Unauthorized");
 
   const { userAccount } = await getUser();
 
@@ -134,7 +132,7 @@ export async function getUser() {
     data: { user },
   } = await supabase.auth.getUser();
 
-  if (!user.id) throw new Error("Unauthorized");
+  if (!user?.id) throw new Error("Unauthorized");
 
   const { data: userAccount, error } = await supabase
     .from("user")
@@ -152,8 +150,6 @@ export async function getUserById(id) {
     data: { session },
   } = await supabase.auth.getSession();
 
-  if (!session.access_token) throw new Error("Unauthorized");
-
   const { data: userAccount, error } = await supabase
     .from("user")
     .select("id, username, avatar, email, global_name")
@@ -168,8 +164,6 @@ export async function sendFriendRequest(currentState, formData) {
   const {
     data: { session },
   } = await supabase.auth.getSession();
-
-  if (!session.access_token) throw new Error("Unauthorized");
 
   const { userAccount } = await getUser();
 
@@ -203,6 +197,8 @@ export async function sendFriendRequest(currentState, formData) {
     are_friends: false,
     channelId: channelId,
   });
+
+  if (!error) return "Friend request sent!";
 }
 
 export async function getUserIdByUsername(username) {
@@ -211,8 +207,6 @@ export async function getUserIdByUsername(username) {
   const {
     data: { session },
   } = await supabase.auth.getSession();
-
-  if (!session.access_token) throw new Error("Unauthorized");
 
   const { data: userId, error } = await supabase
     .from("user")
@@ -230,8 +224,6 @@ export async function getUserIdByEmail(email) {
     data: { session },
   } = await supabase.auth.getSession();
 
-  if (!session.access_token) throw new Error("Unauthorized");
-
   const { data: userId, error } = await supabase
     .from("user")
     .select("id")
@@ -246,8 +238,6 @@ export async function getPendingFriendRequests(username) {
   const {
     data: { session },
   } = await supabase.auth.getSession();
-
-  if (!session.access_token) throw new Error("Unauthorized");
 
   const { userId } = await getUserIdByUsername(username);
 
@@ -283,8 +273,6 @@ export async function getSentFriendRequests(username) {
     data: { session },
   } = await supabase.auth.getSession();
 
-  if (!session.access_token) throw new Error("Unauthorized");
-
   const { userId } = await getUserIdByUsername(username);
 
   const { data: friendSent, error: friendsSentError } = await supabase
@@ -319,7 +307,9 @@ export async function acceptFriendRequest(formData) {
     data: { session },
   } = await supabase.auth.getSession();
 
-  if (!session.access_token) throw new Error("Unauthorized");
+  if (!session.access_token) {
+    throw new Error("Unauthorized");
+  }
 
   const { data: data1, error: error1 } = await supabase
     .from("friend")
@@ -340,8 +330,6 @@ export async function createChannelWithFriends(id1, id2) {
   const {
     data: { session },
   } = await supabase.auth.getSession();
-
-  if (!session.access_token) throw new Error("Unauthorized");
 
   const id = Snowflake.generate();
 
@@ -366,8 +354,6 @@ export async function createChannel(formData) {
     data: { session },
   } = await supabase.auth.getSession();
 
-  if (!session.access_token) throw new Error("Unauthorized");
-
   const { userAccount } = await getUser();
 
   const { userAccount: friendAccount } = await getUserById(formData.get("id"));
@@ -387,8 +373,6 @@ export async function createChannelByUserId(userId) {
     data: { session },
   } = await supabase.auth.getSession();
 
-  if (!session.access_token) throw new Error("Unauthorized");
-
   const { userAccount } = await getUser();
 
   const id = Snowflake.generate();
@@ -405,8 +389,6 @@ export async function getChannel(formData) {
   const {
     data: { session },
   } = await supabase.auth.getSession();
-
-  if (!session.access_token) throw new Error("Unauthorized");
 
   const { userAccount } = await getUser();
 
@@ -430,8 +412,6 @@ export async function getChannelsByUserId() {
     data: { session },
   } = await supabase.auth.getSession();
 
-  if (!session.access_token) throw new Error("Unauthorized");
-
   const { userAccount } = await getUser();
 
   const { data: channels, error: channelError } = await supabase
@@ -449,8 +429,6 @@ export async function getChannelById(channelId) {
     data: { session },
   } = await supabase.auth.getSession();
 
-  if (!session.access_token) throw new Error("Unauthorized");
-
   const { data: channel, error } = await supabase
     .from("channel")
     .select("id::text, created_at, recepients")
@@ -467,8 +445,6 @@ export async function goToChannel(formData) {
     data: { session },
   } = await supabase.auth.getSession();
 
-  if (!session.access_token) throw new Error("Unauthorized");
-
   const { channel } = await getChannel(formData);
 
   if (channel.recepients.includes(Number(formData.get("id"))) === false)
@@ -483,8 +459,6 @@ export async function getFriends() {
   const {
     data: { session },
   } = await supabase.auth.getSession();
-
-  if (!session.access_token) throw new Error("Unauthorized");
 
   const { userAccount } = await getUser();
 
