@@ -12,11 +12,11 @@ function AllFriends({ users: friends }) {
       {friends.length > 0 && (
         <div className="flex flex-col gap-y-2">
           <span className="text-white font-semibold">{`All friends - ${friends.length}`}</span>
-          <Separator className="bg-neutral-800" />
+          <Separator className="bg-zinc-800" />
           {friends.map((user) => (
             <div key={user.id} className="flex flex-col gap-y-2">
               <UserDialog user={user} type="friend" />
-              <Separator className="bg-neutral-800" />
+              <Separator className="bg-zinc-800" />
             </div>
           ))}
         </div>

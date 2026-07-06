@@ -237,14 +237,16 @@ export async function getUserIdByEmail(email) {
   return { userId };
 }
 
-export async function getPendingFriendRequests(username) {
+export async function getPendingFriendRequests(username, currentUserId) {
   const supabase = await createClient();
 
   const {
     data: { session },
   } = await supabase.auth.getSession();
 
-  const { userId } = await getUserIdByUsername(username);
+  const userId = currentUserId
+    ? { id: currentUserId }
+    : (await getUserIdByUsername(username)).userId;
 
   const { data: friendRequests, error: friendsError } = await supabase
     .from("friend")
@@ -271,14 +273,16 @@ export async function getPendingFriendRequests(username) {
   return { userRequests };
 }
 
-export async function getSentFriendRequests(username) {
+export async function getSentFriendRequests(username, currentUserId) {
   const supabase = await createClient();
 
   const {
     data: { session },
   } = await supabase.auth.getSession();
 
-  const { userId } = await getUserIdByUsername(username);
+  const userId = currentUserId
+    ? { id: currentUserId }
+    : (await getUserIdByUsername(username)).userId;
 
   const { data: friendSent, error: friendsSentError } = await supabase
     .from("friend")
@@ -458,14 +462,14 @@ export async function goToChannel(formData) {
   redirect(`/channels/${channel.id}`);
 }
 
-export async function getFriends() {
+export async function getFriends(currentUser) {
   const supabase = await createClient();
 
   const {
     data: { session },
   } = await supabase.auth.getSession();
 
-  const { userAccount } = await getUser();
+  const userAccount = currentUser ?? (await getUser()).userAccount;
 
   const { data: friends, error } = await supabase
     .from("friend")

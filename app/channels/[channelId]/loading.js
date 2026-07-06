@@ -2,7 +2,7 @@ import { LoaderCircle } from "lucide-react";
 
 function Loading() {
   return (
-    <div className="h-screen bg-neutral-900 flex flex-col items-center justify-center">
+    <div className="h-screen bg-zinc-950 flex flex-col items-center justify-center">
       <div className="size-12 flex items-center justify-center">
         <svg
           className="fill-neutral-800 animate-bounce"

@@ -20,7 +20,7 @@ function ChatInput({ channelId }) {
   };
 
   const handleSubmit = () => {
-    () => setMessage("");
+    setMessage("");
   };
 
   return (

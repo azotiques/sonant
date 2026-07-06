@@ -7,62 +7,54 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
-import { Separator } from "@/components/ui/separator";
-import {
-  acceptFriendRequest,
-  createChannel,
-  getChannel,
-  goToChannel,
-  sendMessage,
-} from "../_utils/actions";
-import {
-  MessageCircle,
-  MessageCircleIcon,
-  MessageSquareIcon,
-  Send,
-} from "lucide-react";
+import { acceptFriendRequest } from "../_utils/actions";
+import { Send } from "lucide-react";
 import Link from "next/link";
 
 function UserDialog({ user, type }) {
+  if (type === "friend") {
+    return (
+      <Link className="block w-full" href={`/channels/${user.channelId}`}>
+        <div className="flex w-full items-center gap-x-3 rounded-lg px-3 py-2 text-left hover:bg-zinc-800">
+          <Avatar className="size-10">
+            <AvatarImage src={user.avatar} />
+            <AvatarFallback className="bg-zinc-800 text-zinc-200">
+              {user.username.at(0).toUpperCase()}
+            </AvatarFallback>
+          </Avatar>
+          <div className="text-white">{user.global_name}</div>
+        </div>
+      </Link>
+    );
+  }
+
+  const trigger = (
+      <button
+        type="button"
+        className="flex w-full flex-col rounded-lg px-3 py-2 text-left hover:bg-zinc-800"
+      >
+        <div className="flex items-center gap-x-3">
+          <Avatar className="size-10">
+            <AvatarImage src={user.avatar} />
+            <AvatarFallback className="bg-zinc-800 text-zinc-200">
+              {user.username.at(0).toUpperCase()}
+            </AvatarFallback>
+          </Avatar>
+          <div className="text-white">{user.global_name}</div>
+        </div>
+      </button>
+  );
+
   return (
     <Dialog>
-      <DialogTrigger>
-        {type === "friend" && (
-          <Link href={`/channels/${user.channelId}`}>
-            <div className="flex flex-col px-3 py-2  hover:bg-neutral-800 rounded-lg">
-              <div className="flex items-center gap-x-3">
-                <Avatar className="size-10">
-                  <AvatarImage src={user.avatar} />
-                  <AvatarFallback>
-                    {user.username.at(0).toUpperCase()}
-                  </AvatarFallback>
-                </Avatar>
-                <div className="text-white">{user.global_name}</div>
-              </div>
-            </div>
-          </Link>
-        )}
-        {type !== "friend" && (
-          <div className="flex flex-col px-3 py-2  hover:bg-neutral-800 rounded-lg">
-            <div className="flex items-center gap-x-3">
-              <Avatar className="size-10">
-                <AvatarImage src={user.avatar} />
-                <AvatarFallback>
-                  {user.username.at(0).toUpperCase()}
-                </AvatarFallback>
-              </Avatar>
-              <div className="text-white">{user.global_name}</div>
-            </div>
-          </div>
-        )}
-      </DialogTrigger>
-      <DialogContent className="bg-neutral-900 border-0">
+      <DialogTrigger asChild>{trigger}</DialogTrigger>
+      <DialogContent className="border-0 bg-zinc-950">
         <DialogHeader>
           <div className="flex justify-between items-start">
             <div className="flex flex-col gap-y-8">
               <Avatar className="size-26">
                 <AvatarImage src={user.avatar} />
-                <AvatarFallback>
+                <AvatarFallback className="bg-zinc-800 text-zinc-200">
                   <span className="text-4xl">
                     {user.global_name.at(0).toUpperCase()}
                   </span>
@@ -102,14 +94,6 @@ function UserDialog({ user, type }) {
                 </Link>
               )}
 
-              {type === "friend" && (
-                <Link href={`/channels/${user.channelId}`}>
-                  <input type="hidden" name="id" value={user.id} />
-                  <Button>
-                    Send message <Send />
-                  </Button>
-                </Link>
-              )}
             </div>
           </div>
         </DialogHeader>

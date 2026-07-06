@@ -17,11 +17,11 @@ function PendingFriends({ data, dataSent }) {
       {data.length > 0 && (
         <div className="flex flex-col gap-y-2">
           <span className="text-white font-semibold">{`Received - ${data.length}`}</span>
-          <Separator className="bg-neutral-800" />
+          <Separator className="bg-zinc-800" />
           {data.map((user) => (
             <div key={user.id} className="flex flex-col gap-y-2">
               <UserDialog user={user} type="request" />
-              <Separator className="bg-neutral-800" />
+              <Separator className="bg-zinc-800" />
             </div>
           ))}
         </div>
@@ -32,11 +32,11 @@ function PendingFriends({ data, dataSent }) {
           <span className="text-white font-semibold">
             {`Sent - ${dataSent.length}`}
           </span>
-          <Separator className="bg-neutral-800" />
+          <Separator className="bg-zinc-800" />
           {dataSent.map((user) => (
             <div key={user.id} className="flex flex-col gap-y-2">
               <UserDialog user={user} type="sent" />
-              <Separator className="bg-neutral-800" />
+              <Separator className="bg-zinc-800" />
             </div>
           ))}
         </div>

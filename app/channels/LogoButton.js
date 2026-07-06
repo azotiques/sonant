@@ -2,14 +2,16 @@ import Link from "next/link";
 
 function LogoButton() {
   return (
-    <div>
+    <div className="flex w-full justify-center">
       <Link href="/channels">
         <button
           className={
-            "size-12 flex flex-col items-center text-2xl text-neutral-950 border-white border-t-1 bg-linear-to-r/longer from-teal-100 to-indigo-200 hover:bg-neutral-700 hover:text-neutral-500 px-3 py-2 rounded-lg transition-all"
+            "flex size-12 items-center justify-center rounded-lg border-t border-white bg-linear-to-r/longer from-teal-100 to-indigo-200 p-2 text-neutral-950 transition-all hover:from-teal-200 hover:to-indigo-300"
           }
+          aria-label="Home"
         >
           <svg
+            className="fill-current size-8"
             id="Layer_1"
             data-name="Layer 1"
             xmlns="http://www.w3.org/2000/svg"

@@ -9,6 +9,10 @@ function MessageList({ channelId, message }) {
   const bottomOfPanelRef = useRef(null);
 
   useEffect(() => {
+    setMessages(message);
+  }, [message]);
+
+  useEffect(() => {
     const supabase = createClient();
 
     const channel = supabase

@@ -25,14 +25,14 @@ function AddFriend() {
         <form action={formAction}>
           <div
             className={cn(
-              "flex flex-row items-center justify-between gap-x-2 px-4 py-3 w-180 border-neutral-800 shadow-neutral-950/40 shadow-xl border-1 rounded-4xl text-white break-normal",
+              "flex flex-row items-center justify-between gap-x-2 px-4 py-3 w-180 border-zinc-800 shadow-zinc-950/40 shadow-xl border rounded-4xl text-white break-normal",
               message &&
-                "flex flex-row items-center justify-between gap-x-2 px-4 py-3 w-180 border-red-400 shadow-neutral-950/40 shadow-xl border-1 rounded-4xl text-white break-normal"
+                "flex flex-row items-center justify-between gap-x-2 px-4 py-3 w-180 border-red-400 shadow-zinc-950/40 shadow-xl border rounded-4xl text-white break-normal"
             )}
           >
             <input
               placeholder="Enter your friend's Sonant username."
-              className="px-4 py-3 w-[30vw] bg-neutral-950 rounded-3xl text-white break-normal"
+              className="px-4 py-3 w-[30vw] bg-zinc-950 rounded-3xl text-white break-normal"
               name="username"
               type="text"
             />

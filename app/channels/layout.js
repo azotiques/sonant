@@ -1,44 +1,52 @@
-import { cn } from "@/lib/utils";
-import Sidebar from "../_components/Sidebar";
 import Navigation from "./Navigation";
 import {
   ResizableHandle,
   ResizablePanel,
   ResizablePanelGroup,
 } from "@/components/ui/resizable";
-import { redirect } from "next/navigation";
 import LogoButton from "./LogoButton";
-import {
-  getPendingFriendRequests,
-  getSentFriendRequests,
-  getUser,
-} from "../_utils/actions";
+import AllFriendsSidebar from "../_components/AllFriendsSidebar";
+import Sidebar from "../_components/Sidebar";
+import { getUser } from "../_utils/actions";
 
-function Layout({ children }) {
+async function Layout({ children }) {
+  const { userAccount } = await getUser();
+
   return (
-    <div className="h-screen">
+    <div className="h-screen overflow-hidden bg-zinc-950">
       <Navigation />
 
-      <div className="flex h-[calc(100vh-39px)] bg-neutral-900">
+      <div className="h-[calc(100vh-39px)] bg-zinc-950">
         <ResizablePanelGroup direction="horizontal">
           <ResizablePanel
-            className="px-3 py-3 gap-y-2 md:flex flex-col xs:hidden justify-between"
-            defaultSize={12}
-            minSize={10}
-            maxSize={18}
+            className="hidden min-w-0 border-r border-zinc-800 bg-zinc-950 md:flex"
+            defaultSize={24}
+            minSize={22}
+            maxSize={38}
           >
-            <div className=" rounded-xl border-neutral-800 border-r-1 h-screen w-16 items-center py-2 flex flex-col">
-              <LogoButton />
-            </div>
+            <div className="relative flex h-full min-w-0 flex-1">
+              <div className="flex h-full w-[72px] shrink-0 flex-col items-center border-r border-zinc-800 bg-zinc-950 px-2 py-3">
+                <LogoButton />
+              </div>
 
-            <Sidebar />
+              <div className="min-w-0 flex-1 bg-zinc-950">
+                <AllFriendsSidebar user={userAccount} />
+              </div>
+
+              <div className="absolute inset-x-2 bottom-2 z-10 rounded-lg bg-zinc-950/95 p-1.5 shadow-2xl shadow-zinc-950/60 backdrop-blur">
+                <Sidebar user={userAccount} />
+              </div>
+            </div>
           </ResizablePanel>
-          <ResizableHandle className="bg-transparent h-[calc(100vh-px)]" />
+
+          <ResizableHandle className="bg-zinc-800" />
+
           <ResizablePanel
-            className="rounded-tl-lg border-neutral-800 border-1"
-            defaultSize={12}
+            className="min-w-0 rounded-tl-lg border border-zinc-800 bg-zinc-950"
+            defaultSize={70}
+            minSize={50}
           >
-            <div className="bg-neutral-900">{children}</div>
+            <div className="h-full min-w-0 bg-zinc-950">{children}</div>
           </ResizablePanel>
         </ResizablePanelGroup>
       </div>

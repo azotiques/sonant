@@ -1,11 +1,11 @@
 import { getUser } from "../_utils/actions";
 import EditUser from "./EditUser";
 
-async function Sidebar() {
-  const { userAccount } = await getUser();
+async function Sidebar({ user }) {
+  const userAccount = user ?? (await getUser()).userAccount;
 
   return (
-    <div className="bg-neutral-900 rounded-lg px-3 py-2 border-neutral-800  border-1">
+    <div className="w-full rounded-md bg-zinc-950 p-1">
       <EditUser user={userAccount} />
     </div>
   );
