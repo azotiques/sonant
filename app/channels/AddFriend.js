@@ -3,17 +3,24 @@
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { sendFriendRequest } from "../_utils/actions";
-import { useActionState } from "react";
+import { useActionState, useEffect } from "react";
 import { cn } from "@/lib/utils";
-import {
-  AlertCircle,
-  AlertOctagon,
-  Triangle,
-  TriangleAlert,
-} from "lucide-react";
+import { TriangleAlert } from "lucide-react";
+import { useQueryClient } from "@tanstack/react-query";
+import { useRouter } from "next/navigation";
 
 function AddFriend() {
   const [message, formAction] = useActionState(sendFriendRequest, null);
+  const queryClient = useQueryClient();
+  const router = useRouter();
+
+  useEffect(() => {
+    if (!message) return;
+
+    queryClient.invalidateQueries({ queryKey: ["friends"] });
+    queryClient.invalidateQueries({ queryKey: ["friend-requests"] });
+    router.refresh();
+  }, [message, queryClient, router]);
 
   return (
     <div className="flex flex-col gap-y-3">

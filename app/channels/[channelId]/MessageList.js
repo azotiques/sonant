@@ -7,6 +7,9 @@ import Message from "./Message";
 function MessageList({ channelId, message }) {
   const [messages, setMessages] = useState(message);
   const bottomOfPanelRef = useRef(null);
+  const channelRef = useRef(null);
+  const pendingBroadcastsRef = useRef([]);
+  const isSubscribedRef = useRef(false);
 
   useEffect(() => {
     setMessages(message);
@@ -29,14 +32,36 @@ function MessageList({ channelId, message }) {
       });
     };
 
-    const handleLocalBroadcastMessage = (event) => {
-      appendMessage(event.detail);
+    const broadcastMessage = (newMessage) => {
+      const channel = channelRef.current;
+
+      if (!channel || !isSubscribedRef.current) {
+        pendingBroadcastsRef.current.push(newMessage);
+        return;
+      }
+
+      channel.send({
+        type: "broadcast",
+        event: "message",
+        payload: newMessage,
+      });
     };
 
-    window.addEventListener(
-      "sonant:broadcast-message",
-      handleLocalBroadcastMessage
-    );
+    const flushPendingBroadcasts = () => {
+      const pendingBroadcasts = pendingBroadcastsRef.current;
+      pendingBroadcastsRef.current = [];
+
+      pendingBroadcasts.forEach((newMessage) => {
+        broadcastMessage(newMessage);
+      });
+    };
+
+    const handleLocalSendMessage = (event) => {
+      appendMessage(event.detail);
+      broadcastMessage(event.detail);
+    };
+
+    window.addEventListener("sonant:send-message", handleLocalSendMessage);
 
     const supabase = createClient();
     const channel = supabase
@@ -44,13 +69,21 @@ function MessageList({ channelId, message }) {
       .on("broadcast", { event: "message" }, ({ payload }) => {
         appendMessage(payload);
       })
-      .subscribe();
+      .subscribe((status) => {
+        isSubscribedRef.current = status === "SUBSCRIBED";
+
+        if (status === "SUBSCRIBED") {
+          flushPendingBroadcasts();
+        }
+      });
+
+    channelRef.current = channel;
 
     return () => {
-      window.removeEventListener(
-        "sonant:broadcast-message",
-        handleLocalBroadcastMessage
-      );
+      window.removeEventListener("sonant:send-message", handleLocalSendMessage);
+      channelRef.current = null;
+      pendingBroadcastsRef.current = [];
+      isSubscribedRef.current = false;
       supabase.removeChannel(channel);
     };
   }, [channelId]);

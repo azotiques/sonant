@@ -5,20 +5,30 @@ import {
   getPendingFriendRequests,
   getSentFriendRequests,
 } from "../_utils/actions";
-import { LoaderCircle } from "lucide-react";
 import UserDialog from "../_components/UserDialog";
-import useUser from "@/hooks/useUser";
 import { Separator } from "@/components/ui/separator";
-import { createClient } from "../_utils/supabase/client";
 
 function PendingFriends({ data, dataSent }) {
+  const { data: receivedData } = useQuery({
+    queryKey: ["friend-requests", "received"],
+    queryFn: () => getPendingFriendRequests(),
+    initialData: { userRequests: data },
+  });
+  const { data: sentData } = useQuery({
+    queryKey: ["friend-requests", "sent"],
+    queryFn: () => getSentFriendRequests(),
+    initialData: { userSent: dataSent },
+  });
+  const receivedRequests = receivedData?.userRequests ?? [];
+  const sentRequests = sentData?.userSent ?? [];
+
   return (
     <div className="flex flex-col gap-y-4">
-      {data.length > 0 && (
+      {receivedRequests.length > 0 && (
         <div className="flex flex-col gap-y-2">
-          <span className="text-white font-semibold">{`Received - ${data.length}`}</span>
+          <span className="text-white font-semibold">{`Received - ${receivedRequests.length}`}</span>
           <Separator className="bg-zinc-800" />
-          {data.map((user) => (
+          {receivedRequests.map((user) => (
             <div key={user.id} className="flex flex-col gap-y-2">
               <UserDialog user={user} type="request" />
               <Separator className="bg-zinc-800" />
@@ -27,13 +37,13 @@ function PendingFriends({ data, dataSent }) {
         </div>
       )}
 
-      {dataSent.length > 0 && (
+      {sentRequests.length > 0 && (
         <div className="flex flex-col gap-y-2">
           <span className="text-white font-semibold">
-            {`Sent - ${dataSent.length}`}
+            {`Sent - ${sentRequests.length}`}
           </span>
           <Separator className="bg-zinc-800" />
-          {dataSent.map((user) => (
+          {sentRequests.map((user) => (
             <div key={user.id} className="flex flex-col gap-y-2">
               <UserDialog user={user} type="sent" />
               <Separator className="bg-zinc-800" />

@@ -203,7 +203,11 @@ export async function sendFriendRequest(currentState, formData) {
     channelId: channelId,
   });
 
-  if (!error) return "Friend request sent!";
+  if (error) throw new Error(error.message);
+
+  revalidatePath("/channels", "layout");
+
+  return "Friend request sent!";
 }
 
 export async function getUserIdByUsername(username) {
@@ -246,7 +250,9 @@ export async function getPendingFriendRequests(username, currentUserId) {
 
   const userId = currentUserId
     ? { id: currentUserId }
-    : (await getUserIdByUsername(username)).userId;
+    : username
+    ? (await getUserIdByUsername(username)).userId
+    : (await getUser()).userAccount;
 
   const { data: friendRequests, error: friendsError } = await supabase
     .from("friend")
@@ -254,6 +260,9 @@ export async function getPendingFriendRequests(username, currentUserId) {
     .eq("id2", userId.id)
     .neq("id1", userId.id)
     .eq("are_friends", false);
+
+  if (friendsError) throw new Error(friendsError.message);
+  if (friendRequests.length === 0) return { userRequests: [] };
 
   const { data: users, error: userError } = await supabase
     .from("user")
@@ -263,12 +272,22 @@ export async function getPendingFriendRequests(username, currentUserId) {
       friendRequests.map((friend) => friend.id1)
     );
 
-  const channelIds = friendRequests.map((friend) => friend.channelId).reverse();
+  if (userError) throw new Error(userError.message);
 
-  const userRequests = users.map((user, i) => ({
-    ...user,
-    channelId: channelIds[i],
-  }));
+  const usersById = new Map(users.map((user) => [String(user.id), user]));
+
+  const userRequests = friendRequests
+    .map((friend) => {
+      const user = usersById.get(String(friend.id1));
+
+      if (!user) return null;
+
+      return {
+        ...user,
+        channelId: friend.channelId,
+      };
+    })
+    .filter(Boolean);
 
   return { userRequests };
 }
@@ -282,7 +301,9 @@ export async function getSentFriendRequests(username, currentUserId) {
 
   const userId = currentUserId
     ? { id: currentUserId }
-    : (await getUserIdByUsername(username)).userId;
+    : username
+    ? (await getUserIdByUsername(username)).userId
+    : (await getUser()).userAccount;
 
   const { data: friendSent, error: friendsSentError } = await supabase
     .from("friend")
@@ -290,6 +311,9 @@ export async function getSentFriendRequests(username, currentUserId) {
     .eq("id1", userId.id)
     .neq("id2", userId.id)
     .eq("are_friends", false);
+
+  if (friendsSentError) throw new Error(friendsSentError.message);
+  if (friendSent.length === 0) return { userSent: [] };
 
   const { data: users, error: errorSent } = await supabase
     .from("user")
@@ -299,12 +323,22 @@ export async function getSentFriendRequests(username, currentUserId) {
       friendSent.map((friend) => friend.id2)
     );
 
-  const channelIds = friendSent.map((friend) => friend.channelId).reverse();
+  if (errorSent) throw new Error(errorSent.message);
 
-  const userSent = users.map((user, i) => ({
-    ...user,
-    channelId: channelIds[i],
-  }));
+  const usersById = new Map(users.map((user) => [String(user.id), user]));
+
+  const userSent = friendSent
+    .map((friend) => {
+      const user = usersById.get(String(friend.id2));
+
+      if (!user) return null;
+
+      return {
+        ...user,
+        channelId: friend.channelId,
+      };
+    })
+    .filter(Boolean);
 
   return { userSent };
 }
@@ -320,17 +354,20 @@ export async function acceptFriendRequest(formData) {
     throw new Error("Unauthorized");
   }
 
-  const { data: data1, error: error1 } = await supabase
+  const { userAccount } = await getUser();
+  const friendId = formData.get("id");
+
+  const { error } = await supabase
     .from("friend")
     .update({ are_friends: true })
-    .eq("id1", formData.get("id"))
+    .eq("id1", friendId)
+    .eq("id2", userAccount.id)
+    .eq("are_friends", false)
     .select();
 
-  const { data: data2, error: error2 } = await supabase
-    .from("friend")
-    .update({ are_friends: true })
-    .eq("id2", formData.get("id"))
-    .select();
+  if (error) throw new Error(error.message);
+
+  revalidatePath("/channels", "layout");
 }
 
 export async function createChannelWithFriends(id1, id2) {
@@ -477,21 +514,31 @@ export async function getFriends(currentUser) {
     .or(`id1.eq.${userAccount.id},id2.eq.${userAccount.id}`)
     .eq("are_friends", true);
 
-  const { data: usersData } = await supabase
+  if (error) throw new Error(error.message);
+  if (friends.length === 0) return { users: [] };
+
+  const friendUserIds = friends.map((friend) =>
+    String(friend.id1) === String(userAccount.id) ? friend.id2 : friend.id1
+  );
+  const channelsByUserId = new Map(
+    friends.map((friend) => [
+      String(
+        String(friend.id1) === String(userAccount.id) ? friend.id2 : friend.id1
+      ),
+      friend.channelId,
+    ])
+  );
+
+  const { data: usersData, error: usersError } = await supabase
     .from("user")
     .select()
-    .neq("id", userAccount.id)
-    .or(
-      `id.in.(${friends.map((friend) => friend.id1)}),or(id.in.(${friends.map(
-        (friend) => friend.id2
-      )}))`
-    );
+    .in("id", friendUserIds);
 
-  const channelIds = friends.map((friend) => friend.channelId).reverse();
+  if (usersError) throw new Error(usersError.message);
 
-  const users = usersData.map((obj, i) => ({
-    ...obj,
-    channelId: channelIds[i],
+  const users = usersData.map((user) => ({
+    ...user,
+    channelId: channelsByUserId.get(String(user.id)),
   }));
 
   return { users };

@@ -1,7 +1,6 @@
 "use client";
 
 import { sendMessage } from "@/app/_utils/actions";
-import { createClient } from "@/app/_utils/supabase/client";
 import {
   Popover,
   PopoverContent,
@@ -9,33 +8,19 @@ import {
 } from "@/components/ui/popover";
 import EmojiPicker from "emoji-picker-react";
 import { SmilePlus, TriangleAlert } from "lucide-react";
-import { useEffect, useRef, useState } from "react";
+import { useState } from "react";
 import { Snowflake } from "@theinternetfolks/snowflake";
 
 function ChatInput({ channelId, user }) {
   const [message, setMessage] = useState("");
-  const broadcastChannelRef = useRef(null);
-
-  useEffect(() => {
-    const supabase = createClient();
-    const channel = supabase.channel(`messages:${channelId}`);
-
-    broadcastChannelRef.current = channel;
-    channel.subscribe();
-
-    return () => {
-      broadcastChannelRef.current = null;
-      supabase.removeChannel(channel);
-    };
-  }, [channelId]);
 
   const handleInput = (e) => {
-    e.preventDefault();
-
     setMessage(e.target.value);
   };
 
-  const handleSubmit = () => {
+  const handleSubmit = (e) => {
+    e.preventDefault();
+
     const content = message.trim();
 
     if (!content) return;
@@ -47,26 +32,26 @@ function ChatInput({ channelId, user }) {
       content,
     };
 
+    const formData = new FormData(e.currentTarget);
+    formData.set("content", content);
+
     window.dispatchEvent(
-      new CustomEvent("sonant:broadcast-message", {
+      new CustomEvent("sonant:send-message", {
         detail: liveMessage,
       })
     );
 
-    broadcastChannelRef.current?.send({
-      type: "broadcast",
-      event: "message",
-      payload: liveMessage,
-    });
-
     setMessage("");
+    sendMessage(formData).catch((error) => {
+      console.error("Failed to save message", error);
+    });
   };
 
   return (
     <div className="flex flex-col justify-center items-center">
       <div className="fixed bottom-30"></div>
 
-      <form action={sendMessage} onSubmit={handleSubmit}>
+      <form onSubmit={handleSubmit}>
         <input name="channel_id" type="hidden" value={channelId} />
         <div className="flex items-center justify-between flex-row px-5 py-3 md:w-[40vw] md:h-18 xs:w-[70vw] xs:h-15 border-neutral-800 shadow-neutral-950/40 shadow-xl border-1 rounded-4xl text-white break-normal">
           <input

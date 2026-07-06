@@ -1,3 +1,5 @@
+"use client";
+
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import {
@@ -10,8 +12,22 @@ import {
 import { acceptFriendRequest } from "../_utils/actions";
 import { Send } from "lucide-react";
 import Link from "next/link";
+import { useQueryClient } from "@tanstack/react-query";
+import { useRouter } from "next/navigation";
 
 function UserDialog({ user, type }) {
+  const queryClient = useQueryClient();
+  const router = useRouter();
+
+  const handleAcceptFriendRequest = async (formData) => {
+    await acceptFriendRequest(formData);
+    await Promise.all([
+      queryClient.invalidateQueries({ queryKey: ["friends"] }),
+      queryClient.invalidateQueries({ queryKey: ["friend-requests"] }),
+    ]);
+    router.refresh();
+  };
+
   if (type === "friend") {
     return (
       <Link className="block w-full" href={`/channels/${user.channelId}`}>
@@ -72,7 +88,7 @@ function UserDialog({ user, type }) {
             <div className="flex flex-col gap-y-3">
               {type === "request" && (
                 <div className="flex flex-col gap-y-3">
-                  <form action={acceptFriendRequest}>
+                  <form action={handleAcceptFriendRequest}>
                     <input type="hidden" name="id" value={user.id} />
                     <Button>Accept friend request</Button>
                   </form>
