@@ -23,9 +23,6 @@ function Message({ message }) {
             <span className="font-semibold text-white text-l">
               {message.author.global_name}
             </span>
-            <span className="text-white/30 text-xs">
-              {format(message.timestamp, "dd/MM/yyyy HH:mm")}
-            </span>
           </div>
           <span className="text-white text-l">{message.content}</span>
         </div>

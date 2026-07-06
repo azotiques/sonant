@@ -1,6 +1,6 @@
 "use client";
 
-import { getUser, login } from "@/app/_utils/actions";
+import { login } from "@/app/_utils/actions";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import Link from "next/link";
@@ -8,18 +8,23 @@ import Link from "next/link";
 import {
   Card,
   CardContent,
-  CardDescription,
   CardFooter,
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import { useActionState, useState } from "react";
+import { useActionState } from "react";
 import { TriangleAlert } from "lucide-react";
-import { useQuery } from "@tanstack/react-query";
-import { redirect } from "next/navigation";
+
+function formatAuthMessage(message) {
+  if (!message) return null;
+  if (message === "invalid_credentials") return "Invalid email or password";
+
+  return message.replaceAll("_", " ");
+}
 
 export default function SigninPage() {
   const [message, formAction, isPending] = useActionState(login, null);
+  const authMessage = formatAuthMessage(message);
 
   return (
     <div className="h-screen flex bg-zinc-950 flex-col justify-center items-center">
@@ -29,7 +34,7 @@ export default function SigninPage() {
             <CardTitle className="text-2xl">Log into your account</CardTitle>
           </CardHeader>
           <CardContent>
-            <form className="flex flex-col gap-y-10 size-120">
+            <form action={formAction} className="flex flex-col gap-y-10 size-120">
               <div className="flex flex-col gap-y-3">
                 <label
                   className="text-zinc-300 font-bold text-sm"
@@ -50,14 +55,7 @@ export default function SigninPage() {
                   className="text-zinc-300 font-bold text-sm"
                   htmlFor="password"
                 >
-                  {message === "wrong_password" ? (
-                    <div className="flex items-center gap-x-2 text-rose-500 text-[13px]">
-                      <TriangleAlert className="size-4" />
-                      WRONG PASSWORD
-                    </div>
-                  ) : (
-                    "PASSWORD"
-                  )}
+                  PASSWORD
                 </label>
                 <Input
                   id="password"
@@ -67,9 +65,19 @@ export default function SigninPage() {
                   autoFocus
                 />
               </div>
+              {authMessage ? (
+                <div className="flex items-center gap-x-2 text-rose-500 text-[13px]">
+                  <TriangleAlert className="size-4" />
+                  <span className="capitalize">{authMessage}</span>
+                </div>
+              ) : null}
 
-              <Button formAction={formAction} className="cursor-pointer h-16">
-                Sign in
+              <Button
+                type="submit"
+                disabled={isPending}
+                className="cursor-pointer h-16"
+              >
+                {isPending ? "Signing in..." : "Sign in"}
               </Button>
             </form>
           </CardContent>

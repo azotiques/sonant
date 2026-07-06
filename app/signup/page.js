@@ -8,16 +8,25 @@ import Link from "next/link";
 import {
   Card,
   CardContent,
-  CardDescription,
   CardFooter,
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import { useActionState, useState } from "react";
+import { useActionState } from "react";
 import { TriangleAlert } from "lucide-react";
+
+function formatAuthMessage(message) {
+  if (!message) return null;
+  if (message === "weak_password") {
+    return "Your password must have at least 6 characters";
+  }
+
+  return message.replaceAll("_", " ");
+}
 
 export default function SignupPage() {
   const [message, formAction, isPending] = useActionState(signup, null);
+  const authMessage = formatAuthMessage(message);
 
   return (
     <div className="h-screen flex bg-zinc-950 flex-col justify-center items-center">
@@ -27,7 +36,7 @@ export default function SignupPage() {
             <CardTitle className="text-2xl">Create an account</CardTitle>
           </CardHeader>
           <CardContent>
-            <form className="flex flex-col gap-y-6 size-120">
+            <form action={formAction} className="flex flex-col gap-y-6 size-120">
               <div className="flex flex-col gap-y-3">
                 <label
                   className="text-zinc-300 font-bold text-sm"
@@ -56,14 +65,7 @@ export default function SignupPage() {
                   className="text-zinc-300 font-bold text-sm"
                   htmlFor="password"
                 >
-                  {message === "weak_password" ? (
-                    <div className="flex items-center gap-x-2 text-rose-500 text-[13px]">
-                      <TriangleAlert className="size-4" />
-                      YOUR PASSWORD MUST HAVE ATLEAST 6 CHARACTERS
-                    </div>
-                  ) : (
-                    "PASSWORD"
-                  )}
+                  PASSWORD
                 </label>
                 <Input
                   id="password"
@@ -73,9 +75,19 @@ export default function SignupPage() {
                   autoFocus
                 />
               </div>
+              {authMessage ? (
+                <div className="flex items-center gap-x-2 text-rose-500 text-[13px]">
+                  <TriangleAlert className="size-4" />
+                  <span className="capitalize">{authMessage}</span>
+                </div>
+              ) : null}
 
-              <Button formAction={formAction} className="cursor-pointer h-16">
-                Sign up
+              <Button
+                type="submit"
+                disabled={isPending}
+                className="cursor-pointer h-16"
+              >
+                {isPending ? "Signing up..." : "Sign up"}
               </Button>
             </form>
           </CardContent>

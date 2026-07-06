@@ -10,8 +10,6 @@ import { Snowflake } from "@theinternetfolks/snowflake";
 export async function login(currentState, formData) {
   const supabase = await createClient();
 
-  // type-casting here for convenience
-  // in practice, you should validate your inputs
   const data = {
     email: formData.get("email"),
     password: formData.get("password"),
@@ -20,7 +18,7 @@ export async function login(currentState, formData) {
   const { error } = await supabase.auth.signInWithPassword(data);
 
   if (error) {
-    redirect("/error");
+    return error.code || error.message;
   }
 
   revalidatePath("/", "layout");
@@ -30,8 +28,6 @@ export async function login(currentState, formData) {
 export async function signout() {
   const supabase = await createClient();
 
-  // type-casting here for convenience
-  // in practice, you should validate your inputs
   const { error } = await supabase.auth.signOut();
 
   if (error) {
@@ -45,32 +41,41 @@ export async function signout() {
 export async function signup(currentState, formData) {
   const supabase = await createClient();
 
-  // type-casting here for convenience
-  // in practice, you should validate your inputs
+  const email = formData.get("email");
+  const password = formData.get("password");
+  const username = formData.get("username");
+
   const data = {
-    email: formData.get("email"),
-    password: formData.get("password"),
+    email,
+    password,
+    options: {
+      data: {
+        username,
+        global_name: username,
+      },
+    },
   };
 
-  const { error: errorSignUp } = await supabase.auth.signUp(data);
+  const { data: signUpData, error: errorSignUp } = await supabase.auth.signUp(data);
 
   if (errorSignUp) {
-    return errorSignUp.code;
+    return `Signup failed: ${errorSignUp.message}`;
   }
 
-  const userData = {
-    username: formData.get("username"),
-    global_name: formData.get("username"),
-    email: formData.get("email"),
-  };
+  if (signUpData.session) {
+    const userData = {
+      username,
+      global_name: username,
+      email,
+    };
 
-  const { error: errorUser } = await supabase
-    .from("user")
-    .insert(userData)
-    .select();
+    const { error: errorUser } = await supabase
+      .from("user")
+      .upsert(userData, { onConflict: "email", ignoreDuplicates: true });
 
-  if (errorUser) {
-    redirect("/error");
+    if (errorUser) {
+      return `Profile failed: ${errorUser.message}`;
+    }
   }
 
   revalidatePath("/", "layout");
