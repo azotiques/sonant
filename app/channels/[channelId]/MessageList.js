@@ -13,25 +13,44 @@ function MessageList({ channelId, message }) {
   }, [message]);
 
   useEffect(() => {
-    const supabase = createClient();
+    const appendMessage = (newMessage) => {
+      if (String(newMessage.channel_id) !== String(channelId)) return;
 
+      setMessages((currentMessages) => {
+        if (
+          currentMessages.some(
+            (message) => String(message.id) === String(newMessage.id)
+          )
+        ) {
+          return currentMessages;
+        }
+
+        return [...currentMessages, newMessage];
+      });
+    };
+
+    const handleLocalBroadcastMessage = (event) => {
+      appendMessage(event.detail);
+    };
+
+    window.addEventListener(
+      "sonant:broadcast-message",
+      handleLocalBroadcastMessage
+    );
+
+    const supabase = createClient();
     const channel = supabase
       .channel(`messages:${channelId}`)
-      .on(
-        "postgres_changes",
-        {
-          event: "INSERT",
-          schema: "public",
-          table: "message",
-          filter: `channel_id=eq.${channelId}`,
-        },
-        (payload) => {
-          setMessages((currentMessages) => [...currentMessages, payload.new]);
-        }
-      )
+      .on("broadcast", { event: "message" }, ({ payload }) => {
+        appendMessage(payload);
+      })
       .subscribe();
 
     return () => {
+      window.removeEventListener(
+        "sonant:broadcast-message",
+        handleLocalBroadcastMessage
+      );
       supabase.removeChannel(channel);
     };
   }, [channelId]);

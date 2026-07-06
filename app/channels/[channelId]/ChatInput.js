@@ -1,6 +1,7 @@
 "use client";
 
 import { sendMessage } from "@/app/_utils/actions";
+import { createClient } from "@/app/_utils/supabase/client";
 import {
   Popover,
   PopoverContent,
@@ -8,10 +9,25 @@ import {
 } from "@/components/ui/popover";
 import EmojiPicker from "emoji-picker-react";
 import { SmilePlus, TriangleAlert } from "lucide-react";
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
+import { Snowflake } from "@theinternetfolks/snowflake";
 
-function ChatInput({ channelId }) {
+function ChatInput({ channelId, user }) {
   const [message, setMessage] = useState("");
+  const broadcastChannelRef = useRef(null);
+
+  useEffect(() => {
+    const supabase = createClient();
+    const channel = supabase.channel(`messages:${channelId}`);
+
+    broadcastChannelRef.current = channel;
+    channel.subscribe();
+
+    return () => {
+      broadcastChannelRef.current = null;
+      supabase.removeChannel(channel);
+    };
+  }, [channelId]);
 
   const handleInput = (e) => {
     e.preventDefault();
@@ -20,6 +36,29 @@ function ChatInput({ channelId }) {
   };
 
   const handleSubmit = () => {
+    const content = message.trim();
+
+    if (!content) return;
+
+    const liveMessage = {
+      id: Snowflake.generate(),
+      channel_id: channelId,
+      author: user,
+      content,
+    };
+
+    window.dispatchEvent(
+      new CustomEvent("sonant:broadcast-message", {
+        detail: liveMessage,
+      })
+    );
+
+    broadcastChannelRef.current?.send({
+      type: "broadcast",
+      event: "message",
+      payload: liveMessage,
+    });
+
     setMessage("");
   };
 

@@ -21,7 +21,7 @@ async function Page({ params }) {
     <div className="flex h-full min-w-0 flex-col justify-between bg-zinc-950 px-5 py-4">
       <MessageList channelId={channelId} message={message} />
 
-      <ChatInput channelId={channelId} />
+      <ChatInput channelId={channelId} user={userAccount} />
     </div>
   );
 }
