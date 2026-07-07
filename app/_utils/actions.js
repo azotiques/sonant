@@ -64,6 +64,7 @@ export async function signup(currentState, formData) {
 
   if (signUpData.session) {
     const userData = {
+      auth_user_id: signUpData.user.id,
       username,
       global_name: username,
       email,
@@ -142,7 +143,7 @@ export async function getUser() {
   const { data: userAccount, error } = await supabase
     .from("user")
     .select("id, username, avatar, email, global_name")
-    .eq("email", user.email)
+    .eq("auth_user_id", user.id)
     .single();
 
   return { userAccount };
